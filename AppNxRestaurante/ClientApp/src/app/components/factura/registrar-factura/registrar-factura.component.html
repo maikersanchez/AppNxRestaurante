@@ -1,0 +1,59 @@
+<app-jumbotron [titulo]="titulo" [subtitulo]="subtitulo"></app-jumbotron>
+<fieldset class="form-inline">
+  <div class="form-group">
+    <label for="typeahead-http">Search for a wiki page:</label>
+    <input id="typeahead-http" type="text" class="form-control mx-sm-3" [class.is-invalid]="searchFailed" [(ngModel)]="model" [ngbTypeahead]="search" placeholder="Wikipedia search" />
+    <small *ngIf="searching" class="form-text text-muted">searching...</small>
+    <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
+  </div>
+</fieldset>
+<form [formGroup]="formFactura">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="clienteId">Cliente</label>
+      <input type="number" formControlName="IdCliente" id="clienteId" class="form-control" placeholder="Ingrese número de identidicacion">
+      <div *ngIf="submitted && f.IdCliente.errors">
+        <div *ngIf="f.IdCliente.errors.required" class="invalid-feedback">La identidad es un campo requerido</div>
+        <div *ngIf="f.IdCliente.errors.minlength" class="invalid-feedback">El tamaño mínimo es de 5 carácteres</div>
+        <div *ngIf="f.IdCliente.errors.minlength" class="invalid-feedback">El tamaño máximo es de 20 carácteres</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="meseroId">Mesero</label>
+      <input type="text" formControlName="IdMesero" id="meseroId" class="form-control" placeholder="Ingrese nombre">
+      <div *ngIf="submitted && f.IdMesero.errors">
+        <div *ngIf="f.IdMesero.errors.required" class="invalid-feedback">El nombre es un campo requerido</div>
+        <div *ngIf="f.IdMesero.errors.minlength" class="invalid-feedback">El tamaño mínimo es de 3 carácteres</div>
+        <div *ngIf="f.IdMesero.errors.minlength" class="invalid-feedback">El tamaño máximo es de 20 carácteres</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="mesaId">Mesa</label>
+      <input type="text" formControlName="IdMesa" id="mesaId" class="form-control" placeholder="Ingrese apellido">
+      <div *ngIf="submitted && f.IdMesa.errors">
+        <div *ngIf="f.IdMesa.errors.required" class="invalid-feedback">El apellido es un campo requerido</div>
+        <div *ngIf="f.IdMesa.errors.minlength" class="invalid-feedback">El tamaño mínimo es de 3 carácteres</div>
+        <div *ngIf="f.IdMesa.errors.minlength" class="invalid-feedback">El tamaño máximo es de 20 carácteres</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="apellidoId2">Fecha</label>
+      <input type="text" formControlName="VApellido2" id="apellidoId2" class="form-control" placeholder="Ingrese apellido">
+      <div *ngIf="submitted && f.VApellido2.errors">
+        <div *ngIf="f.VApellido2.errors.required" class="invalid-feedback">El apellido es un campo requerido</div>
+        <div *ngIf="f.VApellido2.errors.minlength" class="invalid-feedback">El tamaño mínimo es de 3 carácteres</div>
+        <div *ngIf="f.VApellido2.errors.minlength" class="invalid-feedback">El tamaño máximo es de 20 carácteres</div>
+      </div>
+    </div>
+    <div class="form-group col-4">
+      <label for="observacionId">Observacion</label>
+      <textarea class="form-control form-control-sm" formControlName="VObservacion" id="observacionId" rows=3  placeholder="Ingrese observación">
+      </textarea>
+      <div *ngIf="submitted && f.VObservacion.errors">
+        <div *ngIf="f.VObservacion.errors.required" class="invalid-feedback">Ingrese observacion</div>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" (click)="send()">Registrar</button>
+  </form>
+  
