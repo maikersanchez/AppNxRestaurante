@@ -47,6 +47,25 @@ namespace AppNxRestaurante.Controllers
             return Ok(tMesa);
         }
 
+        // GET: api/Mesas/Autocomplete/5
+        [HttpGet("Autocomplete/{id}")]
+        public async Task<IActionResult> GetAutocompleteMesas([FromRoute] string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<string> listMesas = (List<string>)await _context.TMesa.AsQueryable().Where(x => x.IdMesa.Contains(id)).Select(x => x.IdMesa).ToAsyncEnumerable().ToList();
+
+            if (listMesas == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(listMesas);
+        }
+
         // PUT: api/Mesas/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTMesa([FromRoute] string id, [FromBody] TMesa tMesa)

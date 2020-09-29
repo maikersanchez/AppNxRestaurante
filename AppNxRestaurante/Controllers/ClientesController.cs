@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AppNxRestaurante.Context;
 using AppNxRestaurante.Entities;
 using AppNxRestaurante.Enums;
+using AppNxRestaurante.ReporteDto;
 
 namespace AppNxRestaurante.Controllers
 {
@@ -46,6 +47,56 @@ namespace AppNxRestaurante.Controllers
             }
 
             return Ok(tCliente);
+        }
+
+        // GET: api/Clientes/Reporte-Mes/valor
+        [HttpGet("Reporte-Mes/{valor}")]
+        public async Task<IActionResult> GetReporteMesCamareros([FromRoute] int valor)
+        {
+           if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tCamareroReporte = await _context.TCliente.AsQueryable().GroupJoin(_context.TFactura, cl => new { cl.IdCliente }, tf => new { tf.IdCliente }, (cl, tf) => new { cl.IdCliente, cl.VNombre, cl.VApellido1, cl.VApellido2, tf.SingleOrDefault().IdFactura, tf.SingleOrDefault().FFactura.Month })
+                .GroupJoin(_context.TDetalleFactura, gr => new { gr.IdFactura }, df => new { df.IdFactura }, (gr, df) => new { gr.IdCliente, gr.VNombre, gr.VApellido1, gr.VApellido2, gr.IdFactura, gr.Month, df.FirstOrDefault().DImporte })
+                .GroupBy(g => new { g.IdCliente, g.VNombre, g.VApellido1, g.VApellido2 })
+                .Select(s => new ClienteReporteDto()
+                {
+                    IdCliente = s.Key.IdCliente.ToString(),
+                    VNombre = s.Key.VNombre,
+                    VApellido1 = s.Key.VApellido1,
+                    VApellido2 = s.Key.VApellido2,
+                    Total = s.Sum(x => x.DImporte)
+                })
+                .Where(x => x.Total > valor).ToArrayAsync();
+
+
+            if (tCamareroReporte == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tCamareroReporte);
+        }
+
+        // GET: api/Clientes/Autocomplete/5
+        [HttpGet("Autocomplete/{id}")]
+        public async Task<IActionResult> GetAutocompleteCliente([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<int> listClientes = (List<int>) await _context.TCliente.AsQueryable().Where(x => x.IdCliente.ToString().Contains(id.ToString())).Select(x => x.IdCliente).ToAsyncEnumerable().ToList();
+
+            if (listClientes == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(listClientes);
         }
 
         // PUT: api/Clientes/5

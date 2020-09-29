@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AppNxRestaurante.Context;
 using AppNxRestaurante.Entities;
+using AppNxRestaurante.Enums;
+using AppNxRestaurante.Dto;
 
 namespace AppNxRestaurante.Controllers
 {
@@ -46,6 +48,55 @@ namespace AppNxRestaurante.Controllers
 
             return Ok(tCocinero);
         }
+
+        // GET: api/Cocineros/Reporte-Mes/mes
+        [HttpGet("Reporte-Mes/{mes}")]
+        public async Task<IActionResult> GetReporteMesCocineros([FromRoute] int mes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tCocineroReporte  = _context.TCocinero.GroupJoin(_context.TDetalleFactura, co => new { co.IdCocinero }, df => new { df.IdCocinero }, (co, df) => new { co.IdCocinero, co.VNombre, co.VApellido1, co.VApellido2, df.FirstOrDefault().IdFacturaNavigation.FFactura.Month, df.FirstOrDefault().DImporte})
+                .GroupBy(g => new { g.IdCocinero, g.VNombre, g.VApellido1, g.VApellido2, g.Month })
+                .Select(s => new CocineroReporteDto(){
+                    IdCocinero = s.Key.IdCocinero.ToString(),
+                    VNombre = s.Key.VNombre,
+                    VApellido1 = s.Key.VApellido1,
+                    VApellido2 = s.Key.VApellido2,
+                    Month = s.Key.Month.ToString(),
+                    totalVentas = s.Sum( x => x.DImporte)
+                });
+
+            if (tCocineroReporte == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tCocineroReporte);
+        }
+
+
+        // GET: api/Cocineros/Autocomplete/5
+        [HttpGet("Autocomplete/{id}")]
+        public async Task<IActionResult> GetAutocompleteCocineros([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<int> listCocineros = (List<int>)await _context.TCocinero.AsQueryable().Where(x => x.IdCocinero.ToString().Contains(id.ToString())).Select(x => x.IdCocinero).ToAsyncEnumerable().ToList();
+
+            if (listCocineros == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(listCocineros);
+        }
+
 
         // PUT: api/Cocineros/5
         [HttpPut("{id}")]
@@ -91,6 +142,8 @@ namespace AppNxRestaurante.Controllers
                 return BadRequest(ModelState);
             }
 
+            tCocinero.BActivo = (byte)Estados.EstadoEnum.Activo;
+            tCocinero.FCreacion = DateTime.Now;
             _context.TCocinero.Add(tCocinero);
             try
             {
@@ -126,6 +179,8 @@ namespace AppNxRestaurante.Controllers
                 return NotFound();
             }
 
+            tCocinero.BActivo = (byte)Estados.EstadoEnum.Inactivo;
+            _context.Entry(tCocinero).State = EntityState.Modified;
             _context.TCocinero.Remove(tCocinero);
             await _context.SaveChangesAsync();
 

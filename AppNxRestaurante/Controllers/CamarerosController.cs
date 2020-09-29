@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AppNxRestaurante.Context;
 using AppNxRestaurante.Entities;
+using AppNxRestaurante.Enums;
+using AppNxRestaurante.Dto;
 
 namespace AppNxRestaurante.Controllers
 {
@@ -47,6 +49,54 @@ namespace AppNxRestaurante.Controllers
             return Ok(tCamarero);
         }
 
+        // GET: api/Camareros/Autocomplete/5
+        [HttpGet("Autocomplete/{id}")]
+        public async Task<IActionResult> GetAutocompleteCamareros([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<int> listCamareros = (List<int>)await _context.TCamarero.AsQueryable().Where(x => x.IdCamarero.ToString().Contains(id.ToString())).Select(x => x.IdCamarero).ToAsyncEnumerable().ToList();
+
+            if (listCamareros == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(listCamareros);
+        }
+
+        // GET: api/Camareros/Reporte-Mes/mes
+        [HttpGet("Reporte-Mes/{mes}")]
+        public async Task<IActionResult> GetReporteMesCamareros([FromRoute] int mes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var tCamareroReporte = new List<CamareroReporteDto>();
+
+            _context.TCamarero.Include(x => x.TFactura).Include("TFactura.TDetalleFactura").ToList().ForEach(x => {
+            tCamareroReporte.Add(new CamareroReporteDto{
+                IdCamarero = x.IdCamarero.ToString(),
+                    VNombre = x.VNombre,
+                    VApellido1 = x.VApellido1,
+                    VApellido2 = x.VApellido2,
+                    Month = mes.ToString(),
+                    totalVentas = x.TFactura.Where(j => j.FFactura.Month == mes).Select(s => s.TDetalleFactura).Select(s => s.Sum(i => i.DImporte)).Sum()
+                });
+            });
+
+            if (tCamareroReporte == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tCamareroReporte);
+        }
+
         // PUT: api/Camareros/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTCamarero([FromRoute] int id, [FromBody] TCamarero tCamarero)
@@ -61,6 +111,7 @@ namespace AppNxRestaurante.Controllers
                 return BadRequest();
             }
 
+            tCamarero.FModificacion = DateTime.Now;
             _context.Entry(tCamarero).State = EntityState.Modified;
 
             try
@@ -90,7 +141,8 @@ namespace AppNxRestaurante.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            tCamarero.BActivo = (byte)Estados.EstadoEnum.Activo;
+            tCamarero.FCreacion = DateTime.Now;
             _context.TCamarero.Add(tCamarero);
             try
             {
@@ -125,7 +177,8 @@ namespace AppNxRestaurante.Controllers
             {
                 return NotFound();
             }
-
+            tCamarero.BActivo = (byte)Estados.EstadoEnum.Inactivo;
+            _context.Entry(tCamarero).State = EntityState.Modified;
             _context.TCamarero.Remove(tCamarero);
             await _context.SaveChangesAsync();
 

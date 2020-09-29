@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AppNxRestaurante.Context;
 using AppNxRestaurante.Entities;
+using AppNxRestaurante.Enums;
 
 namespace AppNxRestaurante.Controllers
 {
@@ -91,6 +92,8 @@ namespace AppNxRestaurante.Controllers
                 return BadRequest(ModelState);
             }
 
+            tDetalleFactura.BActivo = (byte)Estados.EstadoEnum.Activo;
+            tDetalleFactura.FCreacion = DateTime.Now;
             _context.TDetalleFactura.Add(tDetalleFactura);
             await _context.SaveChangesAsync();
 
@@ -112,6 +115,8 @@ namespace AppNxRestaurante.Controllers
                 return NotFound();
             }
 
+            tDetalleFactura.BActivo = (byte)Estados.EstadoEnum.Inactivo;
+            tDetalleFactura.FModificacion = DateTime.Now;
             _context.TDetalleFactura.Remove(tDetalleFactura);
             await _context.SaveChangesAsync();
 

@@ -1,0 +1,11 @@
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\AppNxRestauranteTest.deps.json
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\AppNxRestauranteTest.runtimeconfig.json
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\AppNxRestauranteTest.runtimeconfig.dev.json
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\bin\Debug\netcoreapp2.1\AppNxRestauranteTest.dll
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\obj\Debug\netcoreapp2.1\AppNxRestauranteTest.csprojAssemblyReference.cache
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\obj\Debug\netcoreapp2.1\AppNxRestauranteTest.csproj.CoreCompileInputs.cache
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\obj\Debug\netcoreapp2.1\AppNxRestauranteTest.AssemblyInfoInputs.cache
+C:\Users\abc\source\repos\AppNxRestaurante\AppNxRestauranteTest\obj\Debug\netcoreapp2.1\AppNxRestauranteTest.AssemblyInfo.cs
